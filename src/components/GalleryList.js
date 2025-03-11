@@ -158,7 +158,13 @@ const GalleryList = () => {
 
     // Adaptation du nombre de colonnes en fonction de la largeur de la fenêtre
     const { cols, thumbWidth } = ComposeMediaSize("galleryScreenSize", "galleryScreenCols");
-
+    if (galleries.length === 0) {
+        return (
+            <div style={{ padding: '20px', textAlign: 'center' }}>
+                Aucun résultat pour les galeries.
+            </div>
+        );
+    }
     return (
         <div style={{ padding: '20px', position: 'relative' }}>
             {/* Bouton settings en haut à droite */}
