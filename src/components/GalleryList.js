@@ -161,6 +161,11 @@ const GalleryList = () => {
     if (galleries == null || galleries.length === 0) {
         return (
             <div style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ position: 'absolute', top: 10, right: 10 }}>
+                    <IconButton onClick={handleSettingsClick} style={{ color: 'white' }}>
+                        <SettingsIcon />
+                    </IconButton>
+                </div>
                 Aucun résultat pour les galeries.
             </div>
         );
