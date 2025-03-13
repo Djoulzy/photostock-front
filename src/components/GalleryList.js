@@ -10,6 +10,33 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { checkPassword, isLogged } from '../utils/checkPass';
 
+function PasswordDialog({ open, onClose, password, setPassword, onSubmit }) {
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>Mot de passe requis</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Veuillez entrer votre mot de passe pour accéder aux paramètres.
+                </DialogContentText>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    label="Mot de passe"
+                    type="password"
+                    fullWidth
+                    variant="standard"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>Annuler</Button>
+                <Button onClick={onSubmit}>Valider</Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
 const GalleryList = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -70,6 +97,7 @@ const GalleryList = () => {
     };
 
     const handleSettingsClick = () => {
+        console.log('Settings clicked');
         if (isLogged()) {
             navigate('/admin');
         } else {
@@ -160,13 +188,39 @@ const GalleryList = () => {
     const { cols, thumbWidth } = ComposeMediaSize("galleryScreenSize", "galleryScreenCols");
     if (galleries == null || galleries.length === 0) {
         return (
-            <div style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ position: 'absolute', top: 10, right: 10 }}>
-                    <IconButton onClick={handleSettingsClick} style={{ color: 'white' }}>
-                        <SettingsIcon />
-                    </IconButton>
-                </div>
-                Aucun résultat pour les galeries.
+            <div style={{ 
+            padding: '40px', 
+            textAlign: 'center', 
+            background: 'linear-gradient(to right, #ff7e5f, #feb47b)', 
+            color: '#fff', 
+            minHeight: '92vh',
+            marginBottom: 0,
+
+            bottom: 0,
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+            }}>
+            <div style={{ position: 'absolute', top: 10, right: 10 }}>
+                <IconButton onClick={handleSettingsClick} style={{ color: 'white' }}>
+                <SettingsIcon />
+                </IconButton>
+            </div>
+            <h1>Aucun résultat pour les galeries</h1>
+            <p style={{ fontSize: '18px', maxWidth: '600px', margin: '20px auto' }}>
+                Commencez par uploader des images avec le menu "Upload" dans les paramètres pour voir vos galeries apparaître ici.
+            </p>
+            <p style={{ fontSize: '18px', maxWidth: '600px', margin: '20px auto' }}>
+                Si c'est votre première visite, vous devez vous connecter avec le mot de passe par défaut: admin.
+            </p>
+            <PasswordDialog 
+                open={openPasswordDialog}
+                onClose={handleDialogClose}
+                password={password}
+                setPassword={setPassword}
+                onSubmit={handlePasswordSubmit}
+            />
             </div>
         );
     }
@@ -301,29 +355,13 @@ const GalleryList = () => {
                     </button>
                 )}
             </div>
-            {/* Dialog pour la saisie du mot de passe */}
-            <Dialog open={openPasswordDialog} onClose={handleDialogClose}>
-                <DialogTitle>Mot de passe requis</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Veuillez entrer votre mot de passe pour accéder aux paramètres.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="Mot de passe"
-                        type="password"
-                        fullWidth
-                        variant="standard"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDialogClose}>Annuler</Button>
-                    <Button onClick={handlePasswordSubmit}>Valider</Button>
-                </DialogActions>
-            </Dialog>
+            <PasswordDialog 
+                open={openPasswordDialog}
+                onClose={handleDialogClose}
+                password={password}
+                setPassword={setPassword}
+                onSubmit={handlePasswordSubmit}
+            />
             {/* Dialog pour éditer le displayName de la galerie */}
             <Dialog open={openInfoDialog} onClose={handleInfoDialogClose}>
                 <DialogTitle>Modifier le DisplayName et Copyright</DialogTitle>
