@@ -15,6 +15,7 @@ RUN npm run build
 # CMD ["nginx", "-g", "daemon off;"]
 
 FROM node:23-alpine3.21
+RUN apk add --no-cache xsel
 WORKDIR /app
 COPY --from=build /app/build ./build
 RUN npm install -g serve
