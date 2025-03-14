@@ -1,5 +1,5 @@
 # Étape de build avec Node.js
-FROM node:23.10-alpine AS build
+FROM node:23.10-alpine3.21 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
