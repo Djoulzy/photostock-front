@@ -2,9 +2,9 @@
 FROM node:18-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY .env.docker ./.env
 RUN npm install
 COPY . .
+COPY .env.docker ./.env
 RUN npm run build
 
 # Étape de production avec Nginx
