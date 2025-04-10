@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
-COPY .env.docker ./.env
+# COPY .env.docker ./.env
 RUN npm run build
 
 # Étape de production avec Nginx
