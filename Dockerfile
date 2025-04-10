@@ -21,4 +21,4 @@ COPY --from=build /app/build ./build
 RUN npm install -g serve
 LABEL Name=photostock-front Version=0.0.1
 EXPOSE 80
-CMD ["serve", "--no-clipboard", "-l", "80", "-s", "build;"]
+CMD serve --no-clipboard -l 80 -s build
