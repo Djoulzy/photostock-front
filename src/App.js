@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ENTRYPOINT } from '../config/entrypoint';
+import { ENTRYPOINT } from './config/entrypoint';
 import GalleryList from './components/GalleryList';
 import GalleryDetail from './components/GalleryDetail';
 import PhotoFullScreen from './components/PhotoFullScreen';
