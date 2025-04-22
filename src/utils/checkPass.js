@@ -17,6 +17,16 @@ export async function checkPassword(password) {
     }
 }
 
+export async function changePassword(newPassword) {
+    try {
+        const response = await axios.patch(`${ENTRYPOINT}/settings/auth`, { password: md5(newPassword).toString() })
+        return response.data;
+    } catch (error) {
+        console.error('Erreur lors de la vérification du mot de passe:', error);
+        return false;
+    }
+};
+
 export function isLogged() {
     // Récupérer la valeur de "logged" dans le local storage et la convertir en booléen.
     return localStorage.getItem("logged") === "true";

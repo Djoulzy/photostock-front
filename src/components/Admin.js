@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ENTRYPOINT } from '../config/entrypoint';
 import { useNavigate } from 'react-router-dom';
+import { changePassword } from '../utils/checkPass';
 import Flow from '@flowjs/flow.js';
 
 function Admin() {
@@ -10,8 +11,10 @@ function Admin() {
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [uploadMode, setUploadMode] = useState(false);
+  const [passwordMode, setPasswordMode] = useState(false);
   const [updatedSettings, setUpdatedSettings] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,12 +41,19 @@ function Admin() {
   const handleDisplay = () => {
     setEditMode(true);
     setUploadMode(false);
+    setPasswordMode(false);
   };
 
-  // Updated upload handler to toggle the upload form instead of navigating.
   const handleUpload = () => {
     setUploadMode(true);
     setEditMode(false);
+    setPasswordMode(false);
+  };
+
+  const handlePassword = () => {
+    setPasswordMode(true);
+    setEditMode(false);
+    setUploadMode(false);
   };
 
   const handleInputChange = (e) => {
@@ -56,7 +66,6 @@ function Admin() {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    // Send updated settings via PUT request (adjust endpoint as needed)
     axios.put(`${ENTRYPOINT}/settings`, updatedSettings)
       .then(response => {
         setSettings(response.data);
@@ -67,7 +76,20 @@ function Admin() {
       });
   };
 
-  // Handlers for upload form
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!newPassword) return;
+      const ok = await changePassword(newPassword);
+      if (ok) {
+        alert("Mot de passe mis à jour avec succès");
+        setPasswordMode(false);
+        setNewPassword("");
+      } else {
+        alert("Erreur lors de la mise à jour du mot de passe");
+          // Optionally, display an error message to the user.
+      }
+  };
+
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
@@ -78,7 +100,7 @@ function Admin() {
 
     var flow = new Flow({
       target: `${ENTRYPOINT}/upload`,
-      chunkSize: 1024 * 1024, // example chunk size (1MB)
+      chunkSize: 1024 * 1024,
       singleFile: true
     });
 
@@ -98,12 +120,12 @@ function Admin() {
     });
 
     flow.on("fileProgress", function(file, chunk) {
-        let progress = (chunk.offset + 1) / file.chunks.length * 100;
-        progress = progress.toFixed(2) + "%";
-        let fileslot = document.getElementById(file.uniqueIdentifier);
-        fileslot = fileslot.getElementsByTagName("strong")[0];
-        fileslot.innerHTML = progress;
-      });
+      let progress = (chunk.offset + 1) / file.chunks.length * 100;
+      progress = progress.toFixed(2) + "%";
+      let fileslot = document.getElementById(file.uniqueIdentifier);
+      fileslot = fileslot.getElementsByTagName("strong")[0];
+      fileslot.innerHTML = progress;
+    });
 
     flow.on('fileError', function(file, message) {
       alert("File upload failed: " + message);
@@ -122,7 +144,7 @@ function Admin() {
             <button style={{ width: "100%" }} onClick={handleUpload}>Upload</button>
           </li>
           <li style={{ marginBottom: "10px" }}>
-            <button style={{ width: "100%" }}>Password</button>
+            <button style={{ width: "100%" }} onClick={handlePassword}>Password</button>
           </li>
           <li style={{ marginBottom: "10px" }}>
             <button style={{ width: "100%" }} onClick={handleLogout}>Logout</button>
@@ -141,8 +163,6 @@ function Admin() {
             <div style={{ marginBottom: "10px" }}>
               <label>Choisissez un fichier : </label>
               <input type="file" onChange={handleFileChange} />
-              {/* <input type="file" id="upBrowse" value="Browse" onChange={handleFileChange}/> */}
-
             </div>
             <button type="submit">Upload File</button>
             <button type="button" onClick={() => setUploadMode(false)}>Annuler</button>
@@ -197,6 +217,19 @@ function Admin() {
             </div>
             <button type="submit">Enregistrer</button>
             <button type="button" onClick={() => setEditMode(false)}>Annuler</button>
+          </form>
+        ) : passwordMode ? (
+          <form onSubmit={handlePasswordSubmit}>
+            <div style={{ marginBottom: "10px" }}>
+              <label>Nouveau mot de passe : </label>
+              <input 
+                type="password" 
+                value={newPassword} 
+                onChange={(e) => setNewPassword(e.target.value)} 
+              />
+            </div>
+            <button type="submit">Mettre à jour</button>
+            <button type="button" onClick={() => setPasswordMode(false)}>Annuler</button>
           </form>
         ) : (
           <pre>{JSON.stringify(settings, null, 2)}</pre>
